@@ -1,8 +1,8 @@
 import { PrismaClient, Role, PhotographerStatus, EventStatus, Photographer, Event } from '../src/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
-import * as bcrypt from 'bcryptjs';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { randomUUID } from 'crypto';
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
@@ -13,28 +13,26 @@ async function main() {
     console.log('🌱 Seeding database...');
 
     // ─── Admin User ──────────────────────────────────────────────
-    const adminPasswordHash = await bcrypt.hash('admin123', 10);
     const admin = await prisma.user.upsert({
         where: { email: 'admin@acutialens.com' },
         update: {},
         create: {
+            authId: randomUUID(),
             name: 'Admin Acutia',
             email: 'admin@acutialens.com',
-            passwordHash: adminPasswordHash,
             role: Role.ADMIN,
         },
     });
     console.log(`  ✅ Admin: ${admin.email}`);
 
     // ─── Client User ────────────────────────────────────────────
-    const clientPasswordHash = await bcrypt.hash('cliente123', 10);
     const client = await prisma.user.upsert({
         where: { email: 'joao@email.com' },
         update: {},
         create: {
+            authId: randomUUID(),
             name: 'João Silva',
             email: 'joao@email.com',
-            passwordHash: clientPasswordHash,
             role: Role.CLIENT,
         },
     });
@@ -48,7 +46,6 @@ async function main() {
         { name: 'Juliana Rocha', email: 'juliana@foto.com', status: PhotographerStatus.APROVADO },
     ];
 
-    const passwordHash = await bcrypt.hash('foto123', 10);
     const photographers: Photographer[] = [];
 
     for (const p of photographerData) {
@@ -56,9 +53,9 @@ async function main() {
             where: { email: p.email },
             update: {},
             create: {
+                authId: randomUUID(),
                 name: p.name,
                 email: p.email,
-                passwordHash,
                 role: Role.PHOTOGRAPHER,
             },
         });
@@ -141,7 +138,7 @@ async function main() {
     let photoCount = 0;
 
     for (const event of events) {
-        const numPhotos = 3 + Math.floor(Math.random() * 3); // 3-5 photos per event
+        const numPhotos = 3 + Math.floor(Math.random() * 3);
         for (let i = 0; i < numPhotos; i++) {
             const photographer = approvedPhotographers[i % approvedPhotographers.length];
             const photoUrl = photoUrls[(photoCount + i) % photoUrls.length];
@@ -164,7 +161,6 @@ async function main() {
             photoCount++;
         }
 
-        // Update event photo count
         await prisma.event.update({
             where: { id: event.id },
             data: { photoCount: { increment: numPhotos } },
@@ -173,7 +169,6 @@ async function main() {
         console.log(`  📷 ${numPhotos} photos added to "${event.name}"`);
     }
 
-    // Update photographer photo counts
     for (const photographer of approvedPhotographers) {
         const count = await prisma.photo.count({
             where: { photographerId: photographer.id },
@@ -185,10 +180,10 @@ async function main() {
     }
 
     console.log(`\n✨ Seed completed! ${photoCount} photos across ${events.length} events.`);
-    console.log('\n👤 Credentials:');
-    console.log('   Admin:    admin@acutialens.com / admin123');
-    console.log('   Client:   joao@email.com / cliente123');
-    console.log('   Fotógrafo: ricardo@foto.com / foto123');
+    console.log('\n👤 Users created (authenticate via Supabase):');
+    console.log('   Admin:      admin@acutialens.com');
+    console.log('   Client:     joao@email.com');
+    console.log('   Fotógrafo:  ricardo@foto.com');
 }
 
 main()

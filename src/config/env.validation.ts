@@ -12,19 +12,33 @@ class EnvironmentVariables {
     DATABASE_URL!: string;
 
     @IsString()
-    JWT_SECRET!: string;
+    @IsOptional()
+    DIRECT_URL?: string;
+
+    @IsString()
+    SUPABASE_URL!: string;
+
+    @IsString()
+    SUPABASE_SERVICE_ROLE_KEY!: string;
+
+    @IsString()
+    SUPABASE_JWT_SECRET!: string;
 
     @IsString()
     @IsOptional()
-    JWT_EXPIRATION?: string;
+    STORAGE_ENDPOINT?: string;
 
     @IsString()
     @IsOptional()
-    JWT_REFRESH_SECRET?: string;
+    STORAGE_BUCKET?: string;
 
     @IsString()
     @IsOptional()
-    JWT_REFRESH_EXPIRATION?: string;
+    STORAGE_ACCESS_KEY?: string;
+
+    @IsString()
+    @IsOptional()
+    STORAGE_SECRET_KEY?: string;
 
     @IsNumber()
     @IsOptional()

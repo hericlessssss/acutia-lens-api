@@ -39,14 +39,14 @@ enum OrderStatus {
 // ─── Models ─────────────────────────────────────────────────────
 
 model User {
-  id           String    @id @default(uuid())
-  name         String
-  email        String    @unique
-  passwordHash String
-  role         Role      @default(CLIENT)
-  avatarUrl    String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  authId    String   @unique // Supabase auth.users.id
+  name      String
+  email     String   @unique
+  role      Role     @default(CLIENT)
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   orders       Order[]
   favorites    Favorite[]
