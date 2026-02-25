@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../generated/prisma';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { QueryEventsDto } from './dto/query-events.dto.js';

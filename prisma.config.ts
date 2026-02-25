@@ -1,12 +1,13 @@
+import 'dotenv/config';
 import path from 'node:path';
-import { defineConfig } from 'prisma/config';
+import { defineConfig, env } from 'prisma/config';
 
 export default defineConfig({
-    earlyAccess: true,
     schema: path.join(import.meta.dirname, 'prisma', 'schema.prisma'),
-    migrate: {
-        async datasourceUrl() {
-            return process.env.DATABASE_URL!;
-        },
+    datasource: {
+        url: env('DATABASE_URL'),
+    },
+    migrations: {
+        seed: 'npx ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts',
     },
 });

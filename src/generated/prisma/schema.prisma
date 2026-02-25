@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ──────────────────────────────────────────────────────
+
+enum Role {
+  CLIENT
+  PHOTOGRAPHER
+  ADMIN
+}
+
+enum PhotographerStatus {
+  APROVADO
+  PENDENTE
+}
+
+enum EventStatus {
+  ATIVO
+  ENCERRADO
+}
+
+enum PaymentMethod {
+  PIX
+  CARTAO
+}
+
+enum OrderStatus {
+  PENDENTE
+  APROVADO
+  CANCELADO
+}
+
+// ─── Models ─────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CLIENT)
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders       Order[]
+  favorites    Favorite[]
+  photographer Photographer?
+}
+
+model Photographer {
+  id          String             @id @default(uuid())
+  userId      String             @unique
+  user        User               @relation(fields: [userId], references: [id])
+  status      PhotographerStatus @default(PENDENTE)
+  photosCount Int                @default(0)
+  createdAt   DateTime           @default(now())
+
+  photos Photo[]
+}
+
+model Event {
+  id           String      @id @default(uuid())
+  name         String
+  date         DateTime
+  location     String
+  thumbnailUrl String
+  description  String?
+  status       EventStatus @default(ATIVO)
+  photoCount   Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  photos Photo[]
+}
+
+model Photo {
+  id             String       @id @default(uuid())
+  url            String
+  originalUrl    String
+  eventId        String
+  event          Event        @relation(fields: [eventId], references: [id])
+  photographerId String
+  photographer   Photographer @relation(fields: [photographerId], references: [id])
+  tags           String[]
+  priceCents     Int
+  width          Int?
+  height         Int?
+  faceIndexed    Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  orderItems OrderItem[]
+  favorites  Favorite[]
+}
+
+model Order {
+  id                String        @id @default(uuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  customerName      String
+  customerEmail     String
+  paymentMethod     PaymentMethod
+  status            OrderStatus   @default(PENDENTE)
+  subtotalCents     Int
+  platformFeeCents  Int
+  totalCents        Int
+  externalPaymentId String?
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id         String @id @default(uuid())
+  orderId    String
+  order      Order  @relation(fields: [orderId], references: [id])
+  photoId    String
+  photo      Photo  @relation(fields: [photoId], references: [id])
+  priceCents Int
+  quantity   Int    @default(1)
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  photoId   String
+  photo     Photo    @relation(fields: [photoId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, photoId])
+}

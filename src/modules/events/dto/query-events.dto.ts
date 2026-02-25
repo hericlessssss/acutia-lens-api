@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { EventStatus } from '@prisma/client';
+import { EventStatus } from '../../../generated/prisma';
 import { IsEnum, IsOptional, IsString, IsNumberString } from 'class-validator';
 
 export class QueryEventsDto {

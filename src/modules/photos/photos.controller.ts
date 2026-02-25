@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+import { Role } from '../../generated/prisma';
 import { CurrentUser, Public, Roles } from '../../common/decorators/index.js';
 import { CreatePhotoDto } from './dto/create-photo.dto.js';
 import { QueryPhotosDto } from './dto/query-photos.dto.js';

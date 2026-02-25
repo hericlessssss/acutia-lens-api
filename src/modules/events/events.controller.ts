@@ -9,7 +9,7 @@ import {
     Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+import { Role } from '../../generated/prisma';
 import { Public, Roles } from '../../common/decorators/index.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { QueryEventsDto } from './dto/query-events.dto.js';

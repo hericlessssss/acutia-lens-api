@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaymentMethod } from '@prisma/client';
+import { PaymentMethod } from '../../../generated/prisma';
 import {
     IsArray,
     IsEmail,

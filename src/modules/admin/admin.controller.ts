@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { PhotographerStatus, Role } from '@prisma/client';
+import { PhotographerStatus, Role } from '../../generated/prisma';
 import { Roles } from '../../common/decorators/index.js';
 import { AdminService } from './admin.service.js';
 import { IsEnum } from 'class-validator';

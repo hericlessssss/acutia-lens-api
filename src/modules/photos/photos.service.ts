@@ -3,7 +3,7 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../generated/prisma';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { StorageService } from '../storage/storage.service.js';
 import { CreatePhotoDto } from './dto/create-photo.dto.js';

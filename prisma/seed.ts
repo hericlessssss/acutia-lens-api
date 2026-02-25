@@ -1,7 +1,13 @@
-import { PrismaClient, Role, PhotographerStatus, EventStatus } from '@prisma/client';
+import { PrismaClient, Role, PhotographerStatus, EventStatus, Photographer, Event } from '../src/generated/prisma';
+import { PrismaPg } from '@prisma/adapter-pg';
 import * as bcrypt from 'bcryptjs';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-const prisma = new PrismaClient();
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
     console.log('🌱 Seeding database...');
@@ -43,7 +49,7 @@ async function main() {
     ];
 
     const passwordHash = await bcrypt.hash('foto123', 10);
-    const photographers = [];
+    const photographers: Photographer[] = [];
 
     for (const p of photographerData) {
         const user = await prisma.user.upsert({
@@ -109,7 +115,7 @@ async function main() {
         },
     ];
 
-    const events = [];
+    const events: Event[] = [];
     for (const e of eventsData) {
         const event = await prisma.event.create({ data: e });
         events.push(event);
